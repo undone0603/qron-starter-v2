@@ -1,5 +1,5 @@
 {
   "root": true,
-  "extends": ["next", "next/typescript"],
+  "extends": ["next"],
   "rules": {}
 }

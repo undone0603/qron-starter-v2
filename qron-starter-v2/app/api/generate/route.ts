@@ -1,7 +1,6 @@
 import { NextRequest } from "next/server";
 import fal from "@fal-ai/serverless-client";
 
-
 // ---------- Types ----------
 
 type BrandTier = "starter" | "growth" | "enterprise";
