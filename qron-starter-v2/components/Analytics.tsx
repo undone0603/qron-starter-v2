@@ -1,12 +1,9 @@
-'use client';
-
-import { inject } from '@vercel/analytics';
+import { Analytics as VercelAnalytics } from '@vercel/analytics/next';
 
 /**
  * Analytics component that initializes Vercel Web Analytics
- * Must run on the client side
+ * Re-export of Vercel Analytics for cleaner imports
  */
 export function Analytics() {
-  inject();
-  return null;
+  return <VercelAnalytics />;
 }
