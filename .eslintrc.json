@@ -1,4 +1,4 @@
-{
+{ "root": true,
   "extends": ["next", "next/typescript"],
   "rules": {
     /* --- Core Hygiene --- */
