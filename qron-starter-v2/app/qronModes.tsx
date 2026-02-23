@@ -1,5 +1,3 @@
-'use client';
-
 // app/qronModes.ts
 export type QronMode =
   | 'static'
