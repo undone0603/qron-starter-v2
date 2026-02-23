@@ -1,11 +1,21 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  reactStrictMode: true,
   images: {
-    domains: ["fal.media", "your-supabase-url.supabase.co"],
-  },
-  // No experimental.serverActions — remove it entirely
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'fal.media',
+      },
+      {
+        protocol: 'https',
+        hostname: '*.fal.ai',
+      },
+      {
+        protocol: 'https',
+        hostname: 'runwayml.com',
+      },
+    ],
+  },module.exports = nextConfig;
 };
 
-module.exports = nextConfig;
 
