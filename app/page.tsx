@@ -3,14 +3,14 @@
 import React, { useState } from 'react';
 import QRONCode from '@/components/QRONCode';
 import ModeSelector from '@/app/ModeSelector';
-import { QRON_MODE_CONFIG, type QRonMode } from './qronModes';
+import { QRON_MODE_CONFIG, type QRONMode } from '@/qronModes';
 
 const DEFAULT_JOURNEY = { scans: 1, cities: 1, daysAlive: 1 };
 const DEFAULT_TRAITS = { firstScan: true, achievementLevel: 1 };
 
 export default function HomePage() {
   const [url, setUrl] = useState('');
-  const [mode, setMode] = useState<QRonMode>('static');
+  const [mode, setMode] = useState<QRONMode>('static');
   const [generatedUrl, setGeneratedUrl] = useState<string | null>(null);
   const [hasGenerated, setHasGenerated] = useState(false);
 
