@@ -1,1 +1,8 @@
-{"compilerOptions":{"target":"ES2020","lib":["ES2020","DOM","DOM.Iterable"],"jsx":"preserve","module":"ESNext","moduleResolution":"bundler","allowImportingTsExtensions":true,"resolveJsonModule":true,"outDir":".next","allowJs":true,"strict":true,"esModuleInterop":true,"skipLibCheck":true,"forceConsistentCasingInFileNames":true,"noEmit":true,"isolatedModules":true,"incremental":true,"paths":{"@/*":["./*"]}},"include":["next-env.d.ts","**/*.ts","**/*.tsx"],"exclude":["node_modules",".next"]}
+{
+  "compilerOptions": {
+    "target": "es2017",
+    "module": "esnext",
+    "typeRoots": ["./types", "./node_modules/@types"]
+  }
+}
+
