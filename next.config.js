@@ -1,21 +1,11 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  swcMinify: true,
   images: {
-    remotePatterns: [
-      {
-        protocol: 'https',
-        hostname: '**',
-      },
-    ],
+    domains: ["fal.media", "your-supabase-url.supabase.co"],
   },
-  typescript: {
-    tsconfigPath: './tsconfig.json',
-  },
-  eslint: {
-    dirs: ['app', 'components', 'lib'],
-  },
+  // No experimental.serverActions — remove it entirely
 };
 
 module.exports = nextConfig;
+
