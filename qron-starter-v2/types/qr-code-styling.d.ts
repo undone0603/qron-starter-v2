@@ -31,16 +31,14 @@ declare module "qr-code-styling" {
       crossOrigin?: string;
     };
     cornersSquareOptions?: {
-  color?: string;
-  type?: "square" | "dot" | "extra-rounded";
-};
-
-cornersDotOptions?: {
-  color?: string;
-  type?: "square" | "dot" | "extra-rounded";
-};
-
-  }
+    color?: string;
+    type?: "square" | "dot" | "extra-rounded";
+  };
+   cornersDotOptions?: {
+    color?: string;
+    type?: "square" | "dot" | "extra-rounded";
+  };
+}
 
   export default class QRCodeStyling {
     constructor(options: Options);
@@ -50,5 +48,8 @@ cornersDotOptions?: {
       name?: string;
       extension?: "png" | "jpeg" | "webp";
     }): void;
+    getRawData(
+      extension: "svg" | "png" | "jpeg" | "webp"
+    ): Promise<string | Blob>; 
   }
 }
