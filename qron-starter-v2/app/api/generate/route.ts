@@ -60,7 +60,9 @@ export async function POST(request: NextRequest) {
       : `${modePrompt}, ${stylePrompt}, QR code art, beautiful, scannable, high contrast`;
 
     // Generate with Fal.ai using QR ControlNet
-    const result = await fal.subscribe('fal-ai/fast-sdxl', {
+    const result = await fal.subscribe('
+fal-ai/
+illusion-diffusion', {
       input: {
         prompt: fullPrompt,
         negative_prompt: 'blurry, low quality, distorted, unreadable, broken QR, text, watermark',
@@ -88,7 +90,9 @@ export async function POST(request: NextRequest) {
         style: stylePreset?.name || 'Custom',
         seed: result.seed,
         dimensions: { width: 1024, height: 1024 },
-        aiModel: 'fal-ai/fast-sdxl',
+        aiModel: '
+fal-ai/
+illusion-diffusion',
         generationTime,
       },
       createdAt: new Date(),
