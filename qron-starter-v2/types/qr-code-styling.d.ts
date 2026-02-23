@@ -30,6 +30,16 @@ declare module "qr-code-styling" {
       margin?: number;
       crossOrigin?: string;
     };
+    cornersSquareOptions?: {
+  color?: string;
+  type?: "square" | "dot" | "extra-rounded";
+};
+
+cornersDotOptions?: {
+  color?: string;
+  type?: "square" | "dot" | "extra-rounded";
+};
+
   }
 
   export default class QRCodeStyling {
