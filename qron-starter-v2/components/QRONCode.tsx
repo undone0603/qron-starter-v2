@@ -135,13 +135,17 @@ const QRONCode: React.FC<QRONCodeProps> = ({
     }
   }, [payload, size]);
 
-  useEffect(() => {
-    if (!qrInstance) return;
-    qrInstance.getRawData('svg').then((buffer) => {
-      const svg = typeof buffer === 'string' ? buffer : new TextDecoder().decode(buffer as ArrayBuffer);
-      setSvgMarkup(svg);
-    }).catch(console.error);
-  }, [qrInstance]);
+useEffect(() => {
+  if (!qrInstance) return;
+
+  qrInstance.getRawData("svg")
+    .then((svg) => {
+      setSvgMarkup(svg); // svg is always a string
+    })
+    .catch(console.error);
+}, [qrInstance]);
+
+
 
   const effectsSvg = buildEffectsSVG({ codeId, size, colors, rarity: rarityTier, rarityConfig, journeyStats, userTraits });
 
