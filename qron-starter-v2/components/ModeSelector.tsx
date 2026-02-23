@@ -41,4 +41,3 @@ export const ModeSelector: React.FC<ModeSelectorProps> = ({ mode, onChange }) =>
     </div>
   );
 };
-

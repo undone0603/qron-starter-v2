@@ -1,5 +1,4 @@
 // app/qronModes.ts
-
 export type QronMode =
   | 'static'
   | 'stereographic'
