@@ -1,47 +1,44 @@
-                  : 'bg-slate-800/50 border-slate-700 text-slate-300',
-                isLocked && 'opacity-50 cursor-not-allowed'
-              )}
+'use client';
+
+import React from 'react';
+import { QRON_MODE_CONFIG, type QronMode } from '@/app/qronModes';
+
+interface ModeSelectorProps {
+  mode: QronMode;
+  onChange: (mode: QronMode) => void;
+}
+
+export const ModeSelector: React.FC<ModeSelectorProps> = ({ mode, onChange }) => {
+  return (
+    <div className="space-y-2">
+      <h2 className="text-sm font-medium text-zinc-300">Select QRON Mode</h2>
+
+      <div className="flex flex-wrap gap-2">
+        {Object.entries(QRON_MODE_CONFIG).map(([key, cfg]) => {
+          const m = key as QronMode;
+          const isActive = m === mode;
+
+          return (
+            <button
+              key={m}
+              onClick={() => onChange(m)}
+              className={`px-3 py-1.5 rounded-full text-xs border transition
+                ${
+                  isActive
+                    ? 'border-emerald-400 bg-emerald-500/10 text-emerald-200'
+                    : 'border-zinc-700 bg-zinc-900 text-zinc-300 hover:border-zinc-500'
+                }`}
             >
-              {/* Tier Badge */}
-              {mode.tier !== 'free' && (
-                <span className={cn(
-                  'absolute -top-1 -right-1 text-[10px] px-1.5 py-0.5 rounded-full font-medium',
-                  mode.tier === 'pro' ? 'bg-amber-500 text-black' : 'bg-purple-500 text-white'
-                )}>
-                  {mode.tier === 'pro' ? 'PRO' : 'ENT'}
-                </span>
-              )}
-              
-              <Icon className="w-5 h-5" />
-              <span className="text-xs font-medium">{mode.name}</span>
+              {cfg.label}
             </button>
           );
         })}
       </div>
-      
-      {/* Selected Mode Description */}
-      <div className="mt-4 p-3 bg-slate-900/50 rounded-lg">
-        <div className="flex items-center gap-2 mb-2">
-          {(() => {
-            const mode = MODES.find(m => m.id === selectedMode);
-            const Icon = mode ? IconMap[mode.icon as keyof typeof IconMap] : Sparkles;
-            return <Icon className="w-4 h-4 text-qron-primary" />;
-          })()}
-          <span className="font-medium">
-            {MODES.find(m => m.id === selectedMode)?.name}
-          </span>
-        </div>
-        <p className="text-sm text-slate-400">
-          {MODES.find(m => m.id === selectedMode)?.description}
-        </p>
-        <div className="flex flex-wrap gap-1 mt-2">
-          {MODES.find(m => m.id === selectedMode)?.features.map((feature) => (
-            <span key={feature} className="text-xs bg-slate-800 px-2 py-0.5 rounded-full text-slate-300">
-              {feature}
-            </span>
-          ))}
-        </div>
-      </div>
+
+      <p className="text-xs text-zinc-400 mt-1">
+        {QRON_MODE_CONFIG[mode].description}
+      </p>
     </div>
   );
-}
+};
+
