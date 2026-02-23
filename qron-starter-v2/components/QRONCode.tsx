@@ -83,13 +83,13 @@ function generateParticles(
 function buildEffectsSVG(args: {
   codeId: string;
   size: number;
-  colors: typeof STATE_COLORS[VerificationState];
+  colors: (typeof STATE_COLORS)[VerificationState];
   rarity: RarityTier;
-  rarityConfig: typeof RARITY_CONFIG[RarityTier];
+  rarityConfig: (typeof RARITY_CONFIG)[RarityTier];
   journeyStats: JourneyStats;
   userTraits: UserTraits;
 }): string {
-  const { codeId, size, colors, rarity, rarityConfig, journeyStats, userTraits } = args;
+  const { codeId, size, colors, rarityConfig, journeyStats, userTraits } = args;
 
   const padding = 24;
   const viewBoxSize = size + padding * 2;
@@ -151,8 +151,11 @@ const QRONCode: React.FC<QRONCodeProps> = ({
   const [qrInstance, setQrInstance] = useState<QRCodeStyling | null>(null);
   const [svgMarkup, setSvgMarkup] = useState<string>('');
 
-  const colors = STATE_COLORS[verificationState];
-  const rarityConfig = RARITY_CONFIG[rarityTier];
+  const colors: (typeof STATE_COLORS)[VerificationState] =
+    STATE_COLORS[verificationState as VerificationState];
+
+  const rarityConfig: (typeof RARITY_CONFIG)[RarityTier] =
+    RARITY_CONFIG[rarityTier as RarityTier];
 
   // Initialize QR instance
   useEffect(() => {
@@ -183,7 +186,13 @@ const QRONCode: React.FC<QRONCodeProps> = ({
 
     qrInstance
       .getRawData('svg')
-      .then((svg) => setSvgMarkup(svg))
+      .then((svg: string | Blob) => {
+        if (svg instanceof Blob) {
+          return svg.text();
+        }
+        return svg;
+      })
+      .then((text: string) => setSvgMarkup(text))
       .catch(console.error);
   }, [qrInstance]);
 
@@ -191,7 +200,7 @@ const QRONCode: React.FC<QRONCodeProps> = ({
     codeId,
     size,
     colors,
-    rarity: rarityTier,
+    rarity: rarityTier as RarityTier,
     rarityConfig,
     journeyStats,
     userTraits,
@@ -224,8 +233,22 @@ export const exportQRONAsPNG = async (
   qrInstance: QRCodeStyling | null
 ): Promise<Blob | null> => {
   if (!qrInstance) return null;
+
   try {
-    return await qrInstance.getRawData('png');
+    const raw = await qrInstance.getRawData('png'); // string | Blob
+
+    if (raw instanceof Blob) {
+      return raw;
+    }
+
+    // raw is a string (likely data URL or SVG); convert to Blob
+    const byteString = atob(raw.split(',')[1] ?? raw);
+    const len = byteString.length;
+    const bytes = new Uint8Array(len);
+    for (let i = 0; i < len; i++) {
+      bytes[i] = byteString.charCodeAt(i);
+    }
+    return new Blob([bytes], { type: 'image/png' });
   } catch {
     return null;
   }
