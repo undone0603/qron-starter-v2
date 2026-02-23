@@ -106,7 +106,7 @@ function buildEffectsSVG(args: {
 }
 
 const QRONCode: React.FC<QRONCodeProps> = ({
-  codeId, payload, verificationState, rarityTier, journeyStats, userTraits, size = 256, className = ''
+  'codeId, payload, verificationState, rarityTier, journeyStats, userTraits, size = 256, className = ''
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [qrInstance, setQrInstance] = useState<QRCodeStyling | null>(null);
