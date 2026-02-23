@@ -1,0 +1,48 @@
+{
+  "extends": ["next", "next/typescript"],
+  "rules": {
+    /* --- Core Hygiene --- */
+    "no-unused-vars": "warn",
+    "no-console": ["warn", { "allow": ["warn", "error"] }],
+    "no-undef": "error",
+
+    /* --- Imports & Modules --- */
+    "import/order": [
+      "warn",
+      {
+        "groups": ["builtin", "external", "internal", "parent", "sibling", "index"],
+        "newlines-between": "always"
+      }
+    ],
+    "import/no-default-export": "off", 
+    "import/no-anonymous-default-export": "warn",
+
+    /* --- React / Next.js --- */
+    "react-hooks/rules-of-hooks": "error",
+    "react-hooks/exhaustive-deps": "warn",
+    "@next/next/no-img-element": "off",
+
+    /* --- TypeScript Safety --- */
+    "@typescript-eslint/no-explicit-any": "warn",
+    "@typescript-eslint/no-unused-vars": ["warn", { "argsIgnorePattern": "^_" }],
+    "@typescript-eslint/consistent-type-imports": "warn",
+
+    /* --- Async / API Route Safety --- */
+    "no-return-await": "error",
+    "require-await": "error",
+
+    /* --- Edge Runtime Safety --- */
+    "no-restricted-globals": [
+      "error",
+      {
+        "name": "process",
+        "message": "Avoid using Node.js process in Edge/Serverless routes."
+      }
+    ],
+
+    /* --- Style & Consistency --- */
+    "prefer-const": "error",
+    "object-shorthand": "warn",
+    "arrow-body-style": ["warn", "as-needed"]
+  }
+}
