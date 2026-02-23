@@ -48,9 +48,8 @@ declare module "qr-code-styling" {
       name?: string;
       extension?: "png" | "jpeg" | "webp";
     }): void;
- 
-  getRawData(
-    extension?: "svg" | "png" | "jpeg" | "webp"
-    ): Promise<string | ArrayBuffer>;
+    getRawData(
+      extension: "svg" | "png" | "jpeg" | "webp"
+    ): Promise<string | Blob>; 
   }
 }
