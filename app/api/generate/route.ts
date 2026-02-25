@@ -248,7 +248,5 @@ export async function POST(req: NextRequest) {
       "Cache-Control": "no-cache, no-transform",
       Connection: "keep-alive",
     },
-  });
+import ModeSelector from "@/components/ModeSelector"; ;
 }
-export { ModeSelector } from './ModeSelector';
-
