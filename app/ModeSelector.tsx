@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { QRON_MODE_CONFIG, type QronMode } from '@/qronModes';
+import { QRON_MODE_CONFIG, type QronMode } from './qronModes';
 
 interface ModeSelectorProps {
   mode: QronMode;
