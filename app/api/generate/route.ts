@@ -1,4 +1,3 @@
-import ModeSelector from "@/components/ModeSelector";
 import { NextRequest } from "next/server";
 import fal from "@fal-ai/serverless-client";
 
@@ -249,5 +248,5 @@ export async function POST(req: NextRequest) {
       "Cache-Control": "no-cache, no-transform",
       Connection: "keep-alive",
     },
-import ModeSelector from "@/components/ModeSelector"; ;
+  });
 }
