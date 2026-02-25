@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import QRONCode from '@/components/QRONCode';
-import ModeSelector from '@/app/ModeSelector';
+import { ModeSelector } from '@/app/ModeSelector';
 import { QRON_MODE_CONFIG, type QRONMode } from '@/qronModes';
 
 const DEFAULT_JOURNEY = { scans: 1, cities: 1, daysAlive: 1 };
