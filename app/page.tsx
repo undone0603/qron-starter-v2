@@ -34,7 +34,7 @@ export default function HomePage() {
         className="border p-3 rounded w-full"
       />
 
-      <ModeSelector mode={mode} setMode={setMode} />
+              <ModeSelector mode={mode} onChange={setMode} />
 
       <button
         onClick={handleGenerate}
