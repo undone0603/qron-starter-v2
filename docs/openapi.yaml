@@ -1,0 +1,521 @@
+openapi: 3.1.0
+info:
+  title: QRON AuthiChain API
+  version: 1.0.0
+  description: |
+    Production API for QRON + AuthiChain truth claims, SKU analytics,
+    and historical incident tracking.
+
+    ## Authentication
+    All endpoints require Bearer JWT authentication from Supabase Auth.
+
+    ## Rate Limits
+    - Standard tier: 1000 requests/hour per user
+    - Brand tier: 10000 requests/hour per brand
+    - Burst allowance: 100 requests/minute
+
+    ## Pagination
+    List endpoints support cursor-based pagination via `cursor` and `limit`.
+  contact:
+    name: QRON API Support
+    email: api@qron.space
+  license:
+    name: Proprietary
+
+servers:
+  - url: https://api.qron.space/v1
+    description: Production
+  - url: https://api-staging.qron.space/v1
+    description: Staging
+
+security:
+  - BearerAuth: []
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: Supabase JWT token from authentication
+
+  schemas:
+    Error:
+      type: object
+      required: [code, message]
+      properties:
+        code:
+          type: string
+          enum:
+            - UNAUTHORIZED
+            - FORBIDDEN
+            - NOT_FOUND
+            - VALIDATION_ERROR
+            - RATE_LIMIT_EXCEEDED
+            - INTERNAL_ERROR
+            - DUPLICATE_CLAIM
+            - DAILY_LIMIT_EXCEEDED
+            - INVALID_SKU
+            - INVALID_SCAN
+        message:
+          type: string
+        details:
+          type: object
+          additionalProperties: true
+        request_id:
+          type: string
+          format: uuid
+
+    TruthClaimInput:
+      type: object
+      required: [scan_id, sku_id, verdict, details]
+      properties:
+        scan_id:
+          type: string
+          format: uuid
+        sku_id:
+          type: string
+          format: uuid
+        verdict:
+          type: string
+          enum: [authentic, suspicious, fake]
+        details:
+          type: object
+          required: [retailer, price_band, condition]
+          properties:
+            retailer:
+              type: string
+              maxLength: 200
+            price_band:
+              type: string
+              enum: [under_50, 50_to_200, 200_to_1000, 1000_to_5000, over_5000]
+            condition:
+              type: string
+              enum: [new_sealed, new_open_box, used_excellent, used_good, used_fair, refurbished]
+            photo_urls:
+              type: array
+              items:
+                type: string
+                format: uri
+              maxItems: 10
+            purchase_date:
+              type: string
+              format: date
+            receipt_url:
+              type: string
+              format: uri
+            notes:
+              type: string
+              maxLength: 1000
+          additionalProperties: false
+
+    TruthClaim:
+      type: object
+      required: [claim_id, scan_id, sku_id, user_id, verdict, details, reputation_weight, reward_amount, created_at]
+      properties:
+        claim_id:
+          type: string
+          format: uuid
+        scan_id:
+          type: string
+          format: uuid
+        sku_id:
+          type: string
+          format: uuid
+        user_id:
+          type: string
+          format: uuid
+        verdict:
+          type: string
+          enum: [authentic, suspicious, fake]
+        details:
+          type: object
+        consensus_aligned:
+          type: boolean
+          nullable: true
+        reputation_weight:
+          type: number
+          minimum: 0
+          maximum: 100
+        reward_amount:
+          type: string
+          pattern: '^\d+(\.\d{1,18})?$'
+        resolved_at:
+          type: string
+          format: date-time
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+
+    TruthClaimResponse:
+      allOf:
+        - $ref: '#/components/schemas/TruthClaim'
+        - type: object
+          properties:
+            reward_breakdown:
+              type: object
+              properties:
+                base_reward:
+                  type: string
+                rarity_multiplier:
+                  type: number
+                accuracy_bonus:
+                  type: string
+                geo_bonus:
+                  type: string
+                first_flag_bonus:
+                  type: string
+                reputation_multiplier:
+                  type: number
+                velocity_penalty:
+                  type: number
+                final_reward:
+                  type: string
+                breakdown:
+                  type: array
+                  items:
+                    type: string
+            status:
+              type: string
+              enum: [pending_consensus, consensus_reached, disputed]
+
+    SKUAnalytics:
+      type: object
+      required: [sku_id, brand_id, canonical_sku, category, confidence_score, total_scans, counterfeit_rate, summary]
+      properties:
+        sku_id:
+          type: string
+          format: uuid
+        brand_id:
+          type: string
+          format: uuid
+        canonical_sku:
+          type: string
+        category:
+          type: string
+          enum: [luxury_fashion, pharma, electronics, automotive, food_bev, other]
+        confidence_score:
+          type: number
+          minimum: 0
+          maximum: 100
+        total_scans:
+          type: integer
+          minimum: 0
+        total_claims:
+          type: integer
+          minimum: 0
+        counterfeit_rate:
+          type: number
+          minimum: 0
+          maximum: 1
+        summary:
+          type: object
+          properties:
+            authentic_claims:
+              type: integer
+            suspicious_claims:
+              type: integer
+            fake_claims:
+              type: integer
+            consensus_claims:
+              type: integer
+            avg_reward:
+              type: string
+        historical_incidents:
+          type: object
+          properties:
+            total_count:
+              type: integer
+            by_type:
+              type: object
+              properties:
+                seizure:
+                  type: integer
+                recall:
+                  type: integer
+                chargeback_spike:
+                  type: integer
+                auction_rejection:
+                  type: integer
+                marketplace_flag:
+                  type: integer
+                regulatory_action:
+                  type: integer
+        geo_heatmap:
+          type: array
+          items:
+            type: object
+            properties:
+              country_code:
+                type: string
+              country_name:
+                type: string
+              scan_count:
+                type: integer
+              fake_claim_count:
+                type: integer
+              lat:
+                type: number
+              lng:
+                type: number
+        timeline:
+          type: object
+          properties:
+            first_scan:
+              type: string
+              format: date-time
+              nullable: true
+            last_scan:
+              type: string
+              format: date-time
+              nullable: true
+            last_claim:
+              type: string
+              format: date-time
+              nullable: true
+
+    HistoricalFact:
+      type: object
+      required: [fact_id, sku_id, type, time_window_start, time_window_end, geo, source, severity, created_at]
+      properties:
+        fact_id:
+          type: string
+          format: uuid
+        sku_id:
+          type: string
+          format: uuid
+        type:
+          type: string
+          enum: [seizure, recall, chargeback_spike, auction_rejection, marketplace_flag, regulatory_action]
+        time_window_start:
+          type: string
+          format: date-time
+        time_window_end:
+          type: string
+          format: date-time
+        geo:
+          type: string
+        source:
+          type: string
+        severity:
+          type: integer
+          minimum: 1
+          maximum: 10
+        payload:
+          type: object
+          additionalProperties: true
+        blockchain_hash:
+          type: string
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+
+    PaginatedHistoricalFacts:
+      type: object
+      required: [data, pagination]
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/HistoricalFact'
+        pagination:
+          type: object
+          required: [cursor, has_more, total_count]
+          properties:
+            cursor:
+              type: string
+              nullable: true
+            has_more:
+              type: boolean
+            total_count:
+              type: integer
+            limit:
+              type: integer
+
+  parameters:
+    ClaimId:
+      name: claim_id
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+
+    SkuId:
+      name: sku_id
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+
+    Cursor:
+      name: cursor
+      in: query
+      required: false
+      schema:
+        type: string
+
+    Limit:
+      name: limit
+      in: query
+      required: false
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100
+        default: 20
+
+paths:
+  /truth-claims:
+    post:
+      operationId: createTruthClaim
+      summary: Submit truth claim
+      description: |
+        Submit a truth claim after scanning a QRON code.
+        Users can submit one claim per scan.
+        Rewards are calculated based on verdict accuracy, product category,
+        geographic risk, user reputation, and first-flag status.
+      tags: [Truth Claims]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TruthClaimInput'
+      responses:
+        '201':
+          description: Truth claim created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TruthClaimResponse'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: Duplicate claim
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Rate limit or daily limit exceeded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /truth-claims/{claim_id}:
+    get:
+      operationId: getTruthClaim
+      summary: Get truth claim details
+      description: Retrieve a specific truth claim by ID with reward breakdown and consensus status
+      tags: [Truth Claims]
+      parameters:
+        - $ref: '#/components/parameters/ClaimId'
+      responses:
+        '200':
+          description: Truth claim details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TruthClaimResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Claim not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /skus/{sku_id}/analytics:
+    get:
+      operationId: getSKUAnalytics
+      summary: Get SKU analytics dashboard
+      description: |
+        Comprehensive analytics for a SKU including total scans, truth claims,
+        counterfeit rate, confidence score, historical incidents,
+        geographic heatmap data, and activity timeline.
+      tags: [SKU Analytics]
+      parameters:
+        - $ref: '#/components/parameters/SkuId'
+      responses:
+        '200':
+          description: SKU analytics data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SKUAnalytics'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: SKU not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /skus/{sku_id}/history:
+    get:
+      operationId: getSKUHistory
+      summary: Get SKU historical incidents
+      description: |
+        Paginated list of historical incidents (seizures, recalls, flags, etc.)
+        for a SKU, ordered by time_window_start descending.
+      tags: [SKU Analytics]
+      parameters:
+        - $ref: '#/components/parameters/SkuId'
+        - $ref: '#/components/parameters/Cursor'
+        - $ref: '#/components/parameters/Limit'
+      responses:
+        '200':
+          description: Historical incidents list
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedHistoricalFacts'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: SKU not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+tags:
+  - name: Truth Claims
+    description: Submit and manage authenticity claims
+  - name: SKU Analytics
+    description: Product-level analytics and historical data
