@@ -2,7 +2,7 @@
 
 **Living QR Codes — Art meets utility. Create AI-generated scannable portals that captivate.**
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/QRON-2026/qron-starter-v2)
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/undone0603/qron-starter-v2&project-name=qron-space&repository-name=qron-space&env=NEXT_PUBLIC_SUPABASE_URL,NEXT_PUBLIC_SUPABASE_ANON_KEY,SUPABASE_SERVICE_ROLE_KEY,GROQ_API_KEY,FAL_KEY,NEXT_PUBLIC_NFT_CONTRACT_ADDRESS,NEXT_PUBLIC_THIRDWEB_CLIENT_ID&envDescription=API%20keys%20for%20QRON%20platform&envLink=https://github.com/undone0603/qron-starter-v2/blob/main/.env.example)
 
 ---
 
@@ -182,12 +182,23 @@ Encode ultrasonic trigger (Echo mode).
 
 ## Deployment
 
-### Vercel (Recommended)
+### Vercel — Option A: One-Click (Recommended)
 
-1. Push to GitHub
-2. Import in Vercel dashboard
-3. Add environment variables
-4. Deploy
+Click the **Deploy with Vercel** button at the top of this README. Vercel will prompt for env vars from `.env.example`.
+
+Then add the `qron.space` domain in **Vercel → Project → Settings → Domains**.
+
+### Vercel — Option B: Auto-deploy via GitHub Actions
+
+The workflow at `.github/workflows/deploy.yml` deploys on every push to `main`.
+
+**One-time setup:**
+1. Get a Vercel token: [vercel.com/account/tokens](https://vercel.com/account/tokens) → Create
+2. Add it as a GitHub secret:
+   ```bash
+   gh secret set VERCEL_TOKEN --body "your-token-here" --repo undone0603/qron-starter-v2
+   ```
+3. Push any commit — deployment triggers automatically
 
 ### Self-Hosted
 
